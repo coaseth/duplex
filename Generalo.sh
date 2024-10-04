@@ -36,13 +36,16 @@ def main():
             print("Error: Could not find prusa-slicer-console.exe.")
             sys.exit(1)
 
+    rotater_path = subprocess.check_output(["locate", "ROT_MIR_M2.py"]).decode().strip()
+
     command1 = [
         'python3',
-        'ROT_MIR_M2.py',
+        rotater_path,
+        '-simplex', 'False',
         '-input', input_file,
         '-output', output_dir,
-        '-log', output_dir,
-        '-simplex', 'False'
+        '-log', output_dir
+        
     ]
     
     # Run the subprocess and capture the exit code
@@ -64,7 +67,9 @@ def main():
     
     
     bare_filename = input_file.strip().split(".")
-    stl_up = bare_filename[0] + "_up." + bare_filename[1]
+    bf=bare_filename[0].split("/")
+    bf2="/"+bf[-1]
+    stl_up = output_dir + bf2 + "_up." + bare_filename[1]
     
     profilefile='--load='+cf
     command2 = [
@@ -77,6 +82,7 @@ def main():
         profilefile,
         stl_up
     ]
+
     result2=subprocess.run(command2)
 
     if result2.returncode != 0:
@@ -85,7 +91,7 @@ def main():
 
     #----------------------------------------------------------------------------------------------
     #Generating lower gcode file from STL
-    stl_down = bare_filename[0] + "_down." + bare_filename[1]
+    stl_down = output_dir + bf2 + "_down." + bare_filename[1]
     if os.path.exists(stl_down) == True:
         command3 = [
             slicer_path,
@@ -98,7 +104,6 @@ def main():
             stl_down
         ]
         result3=subprocess.run(command3)
-
         if result3.returncode != 0:
             print(f"Error: Prusa lower generation failed with exit code {result3.returncode}. Terminating.")
             sys.exit(result3.returncode)
@@ -106,12 +111,12 @@ def main():
         print("No lower file")
     #----------------------------------------------------------------------------------------------
     #Kawasaki robot code generation up
-    g_file_up= bare_filename[0] + "_up.gcode"
-    outdir_pg="--output="+ output_dir
+    g_file_up= output_dir + bf2 + "_up.gcode"
+    outdir_pg="--output="+ output_dir +"/" 
     command4 = [
         'gcode2as', 
         g_file_up,
-        '--inverted=True',
+        '--inverted=False',
         outdir_pg
     ]
     result4=subprocess.run(command4)
@@ -122,7 +127,7 @@ def main():
     #----------------------------------------------------------------------------------------------
     #Kawasaki robot code generation down
 
-    g_file_down= bare_filename[0] + "_down.gcode"
+    g_file_down= output_dir + bf2 + "_down.gcode"
     if os.path.exists(g_file_down) == True: 
         command5 = [
             'gcode2as', 
@@ -131,7 +136,6 @@ def main():
             outdir_pg
         ]
         result5=subprocess.run(command5)
-
         if result5.returncode != 0:
             print(f"Error: Gcode2as failed with exit code {result5.returncode}. Terminating.")
             sys.exit(result5.returncode)
