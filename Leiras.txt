@@ -1,0 +1,30 @@
+git clone https://github.com/drlukeparry/pyclipr.git && cd ./pyclipr
+git submodule update --init --recursive
+
+
+python3 setup.py install
+
+
+
+python3 -m venv koalacenter_virtualenv; source koalacenter_virtualenv/bin/activate
+pip install shapely;pip install setuptools;pip install Cmake;pip install eigen; sudo apt-get install libeigen3-dev;pip install fmt;pip install scipy;pip install scikit-learn;pip install tqdm;pip install stl
+
+
+
+
+
+
+
+
+
+#1. lépés a /usr/src-be gitclone
+#a koalacenter gépen a /var/www/services/ ben található a koalacenter nevű mappa
+#virtual environment létrehozása a szükséges pip installok miatt
+
+
+
+
+
+
+B terv: ha pip nem megy
+apt install python3-shapely;apt install python3-setuptools;apt install python3-cmake;apt install python3-eigen;apt install python3-libeigen3-dev;apt install python3-fmt;apt install python3-scipy;apt install python3-scikit-learn;apt install python3-tqdm;apt install python3-stl
